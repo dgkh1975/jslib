@@ -1,4 +1,4 @@
-import { ConsoleLogService } from '../../../src/services/consoleLog.service';
+import { ConsoleLogService } from 'jslib-common/services/consoleLog.service';
 
 const originalConsole = console;
 let caughtMessage: any;
@@ -18,7 +18,7 @@ export function interceptConsole(interceptions: any): object {
         // tslint:disable-next-line
         error: function () {
             interceptions.error = arguments;
-        }
+        },
     };
     return interceptions;
 }
@@ -40,7 +40,7 @@ describe('ConsoleLogService', () => {
     });
 
     it('filters messages below the set threshold', () => {
-        logService = new ConsoleLogService(true, (level) => true);
+        logService = new ConsoleLogService(true, level => true);
         logService.debug('debug');
         logService.info('info');
         logService.warning('warning');
@@ -86,7 +86,7 @@ describe('ConsoleLogService', () => {
     });
 
     it('filters time output', async () => {
-        logService = new ConsoleLogService(true, (level) => true);
+        logService = new ConsoleLogService(true, level => true);
         logService.time();
         logService.timeEnd();
 

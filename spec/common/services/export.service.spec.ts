@@ -1,32 +1,33 @@
 import { Substitute, SubstituteOf } from '@fluffy-spoon/substitute';
 
-import { ApiService } from '../../../src/abstractions/api.service';
-import { CipherService } from '../../../src/abstractions/cipher.service';
-import { FolderService } from '../../../src/abstractions/folder.service';
+import { ApiService } from 'jslib-common/abstractions/api.service';
+import { CipherService } from 'jslib-common/abstractions/cipher.service';
+import { CryptoService } from 'jslib-common/abstractions/crypto.service';
+import { FolderService } from 'jslib-common/abstractions/folder.service';
 
-import { ExportService } from '../../../src/services/export.service';
+import { ExportService } from 'jslib-common/services/export.service';
 
-import { Cipher } from '../../../src/models/domain/cipher';
-import { CipherString } from '../../../src/models/domain/cipherString';
-import { Login } from '../../../src/models/domain/login';
-import { CipherWithIds as CipherExport } from '../../../src/models/export/cipherWithIds';
+import { Cipher } from 'jslib-common/models/domain/cipher';
+import { EncString } from 'jslib-common/models/domain/encString';
+import { Login } from 'jslib-common/models/domain/login';
+import { CipherWithIds as CipherExport } from 'jslib-common/models/export/cipherWithIds';
 
-import { CipherType } from '../../../src/enums/cipherType';
-import { CipherView } from '../../../src/models/view/cipherView';
-import { LoginView } from '../../../src/models/view/loginView';
+import { CipherType } from 'jslib-common/enums/cipherType';
+import { CipherView } from 'jslib-common/models/view/cipherView';
+import { LoginView } from 'jslib-common/models/view/loginView';
 
 import { BuildTestObject, GetUniqueString } from '../../utils';
 
 const UserCipherViews = [
     generateCipherView(false),
     generateCipherView(false),
-    generateCipherView(true)
+    generateCipherView(true),
 ];
 
 const UserCipherDomains = [
     generateCipherDomain(false),
     generateCipherDomain(false),
-    generateCipherDomain(true)
+    generateCipherDomain(true),
 ];
 
 function generateCipherView(deleted: boolean) {
@@ -46,11 +47,11 @@ function generateCipherView(deleted: boolean) {
 function generateCipherDomain(deleted: boolean) {
     return BuildTestObject({
         id: GetUniqueString('id'),
-        notes: new CipherString(GetUniqueString('notes')),
+        notes: new EncString(GetUniqueString('notes')),
         type: CipherType.Login,
         login: BuildTestObject<Login>({
-            username: new CipherString(GetUniqueString('username')),
-            password: new CipherString(GetUniqueString('password')),
+            username: new EncString(GetUniqueString('username')),
+            password: new EncString(GetUniqueString('password')),
         }, Login),
         collectionIds: null,
         deletedDate: deleted ? new Date() : null,
@@ -74,16 +75,18 @@ describe('ExportService', () => {
     let apiService: SubstituteOf<ApiService>;
     let cipherService: SubstituteOf<CipherService>;
     let folderService: SubstituteOf<FolderService>;
+    let cryptoService: SubstituteOf<CryptoService>;
 
     beforeEach(() => {
         apiService = Substitute.for<ApiService>();
         cipherService = Substitute.for<CipherService>();
         folderService = Substitute.for<FolderService>();
+        cryptoService = Substitute.for<CryptoService>();
 
         folderService.getAllDecrypted().resolves([]);
         folderService.getAll().resolves([]);
 
-        exportService = new ExportService(folderService, cipherService, apiService);
+        exportService = new ExportService(folderService, cipherService, apiService, cryptoService);
     });
 
     it('exports unecrypted user ciphers', async () => {

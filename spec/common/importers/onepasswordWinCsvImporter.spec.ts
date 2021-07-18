@@ -1,8 +1,8 @@
-import { OnePasswordWinCsvImporter as Importer } from '../../../src/importers/onepasswordImporters/onepasswordWinCsvImporter';
+import { OnePasswordWinCsvImporter as Importer } from 'jslib-common/importers/onepasswordImporters/onepasswordWinCsvImporter';
 
-import { CipherType, FieldType } from '../../../src/enums';
-import { CipherView } from '../../../src/models/view/cipherView';
-import { FieldView } from '../../../src/models/view/fieldView';
+import { CipherType, FieldType } from 'jslib-common/enums';
+import { CipherView } from 'jslib-common/models/view/cipherView';
+import { FieldView } from 'jslib-common/models/view/fieldView';
 
 import { data as creditCardData } from './testData/onePasswordCsv/creditCard.windows.csv';
 import { data as identityData } from './testData/onePasswordCsv/identity.windows.csv';
@@ -18,15 +18,15 @@ function expectIdentity(cipher: CipherView) {
         username: 'userNam3',
         company: 'bitwarden',
         phone: '8005555555',
-        email: 'email@bitwarden.com'
+        email: 'email@bitwarden.com',
     }));
 
     expect(cipher.fields).toEqual(jasmine.arrayContaining([
         Object.assign(new FieldView(), {
             type: FieldType.Text,
             name: 'address',
-            value: 'address city state zip us'
-        })
+            value: 'address city state zip us',
+        }),
     ]));
 }
 
